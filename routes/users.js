@@ -14,6 +14,19 @@ router.get('/', ( req, res) =>{
     });
 });
 
+/* GET user by userId. */
+router.get('/:userId', ( req, res) =>{
+    const userId = req.params.userId;
+    mysql.connection.query('SELECT * FROM user where userId = ?',[userId], (err,result) => {
+        if(err){
+            console.log(err);
+            res.status(500).send({error: err})
+        }else{
+            res.status(200).json(result);
+        }
+    });
+});
+
 
 
 /* POST users */
@@ -28,7 +41,7 @@ router.put('/', (req, res) =>{
     const zipCode = req.body.zipCode;
     const city = req.body.city;
     const region = req.body.region;
-    mysql.connection.query('insert into user (userId, email, firstName, lastName, birthDate, phoneNumber, address, zipCode, city, region) values(?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)',[userId, email, firstName, lastName, birthDate, phoneNumber, address, zipCode, city, region],(err,result) => {
+    mysql.connection.query('insert into user (userId, email, firstName, lastName, birthDate, phoneNumber, address, zipCode, city, region) values(?, ?, ?, ?, ?, ?, ?, ?, ?, ?)',[userId, email, firstName, lastName, birthDate, phoneNumber, address, zipCode, city, region],(err,result) => {
         if(err){
             console.log(err);
             res.status(500).send({error: err});

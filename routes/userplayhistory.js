@@ -15,6 +15,19 @@ router.get('/', ( req, res) =>{
     });
 });
 
+/* GET users listing. */
+router.get('/:userId', ( req, res) =>{
+    const userId = req.params.userId;
+    mysql.connection.query('SELECT * FROM userplayhistory where userId = ?',[userId], (err,result) => {
+        if(err){
+            console.log(err);
+            res.status(500).send({error: err})
+        }else{
+            res.status(200).json(result);
+        }
+    });
+});
+
 
 
 /* POST users */

@@ -27,6 +27,59 @@ router.get('/:userId', ( req, res) =>{
     });
 });
 
+/*Get User rank and User total number*/
+router.get('/:userId/rank', (req, res) => {
+  const userId = req.params.userId;
+  mysql.connection.query("SELECT COUNT(*) from user", (err, result) => {
+    if(err) {
+      res.status(500).send({error: err});
+    } else {
+      const totalNumberUsers = result[0]["COUNT(*)"];
+      mysql.connection.query('SELECT rank FROM (SELECT u.*, rank() over (ORDER BY rewardPoints DESC) as rank from user u) u WHERE userId = ?',[userId], (err,result) => {
+        if(err){
+            res.status(500).send({error: err})
+        }else{
+          const finalResult={
+            "totalUsers": totalNumberUsers,
+            "userRank" : result[0].rank
+          }
+            res.status(200).json(finalResult);
+        }
+    });
+    }
+    
+
+  })
+  
+});
+
+
+/* GET user group by user ID with member numbers. */
+router.get('/:userId/groups', ( req, res) =>{
+    const userId = req.params.userId;
+    mysql.connection.query('SELECT DISTINCT cg.id, cg.title, cg.colortheme, cg.description, cg.image, cg.userOwner, cg.visibility, (SELECT COUNT(*) FROM communitygroupuser WHERE idGroup = cg.id) as nbMember from communitygroup cg LEFT JOIN communitygroupuser cgu ON cg.id = cgu.idGroup WHERE cgu.idUser = ?',[userId], (err,result) => {
+        if(err){
+            console.log(err);
+            res.status(500).send({error: err})
+        }else{
+            res.status(200).json(result);
+        }
+    });
+});
+
+/* GET user group by user ID and group id with member numbers. */
+router.get('/:userId/groups/:groupId', ( req, res) =>{
+    const userId = req.params.userId;
+    const groupId = req.params.groupId;
+    mysql.connection.query('SELECT DISTINCT cg.id, cg.title, cg.colortheme, cg.description, cg.image, cg.userOwner, cg.visibility, (SELECT COUNT(*) FROM communitygroupuser WHERE idGroup = cg.id) as nbMember from communitygroup cg LEFT JOIN communitygroupuser cgu ON cg.id = cgu.idGroup WHERE cgu.idUser = = ? AND cgu.idGroup = ?',[userId, groupId], (err,result) => {
+        if(err){
+            console.log(err);
+            res.status(500).send({error: err})
+        }else{
+            res.status(200).json(result);
+        }
+    });
+});
 
 
 /* POST users */
@@ -37,11 +90,13 @@ router.put('/', (req, res) =>{
     const lastName = req.body.lastName;
     const birthDate = req.body.birthDate;
     const phoneNumber = req.body.phoneNumber;
+    const bio = req.body.bio;
+    const colorProfil = req.body.bio;
     const address = req.body.address;
     const zipCode = req.body.zipCode;
     const city = req.body.city;
     const region = req.body.region;
-    mysql.connection.query('insert into user (userId, email, firstName, lastName, birthDate, phoneNumber, address, zipCode, city, region) values(?, ?, ?, ?, ?, ?, ?, ?, ?, ?)',[userId, email, firstName, lastName, birthDate, phoneNumber, address, zipCode, city, region],(err,result) => {
+    mysql.connection.query('insert into user (userId, email, firstName, lastName, birthDate, phoneNumber, bio, colorProfil, address, zipCode, city, region) values(?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)',[userId, email, firstName, lastName, birthDate, phoneNumber, bio, colorProfil, address, zipCode, city, region],(err,result) => {
         if(err){
             console.log(err);
             res.status(500).send({error: err});
@@ -58,6 +113,8 @@ router.post('/:id', (req, res) =>{
     const lastName = req.body.lastName;
     const birthDate = req.body.birthDate;
     const phoneNumber = req.body.phoneNumber;
+    const bio = req.body.bio;
+    const colorProfil = req.body.bio;
     const address = req.body.address;
     const zipCode = req.body.zipCode;
     const city = req.body.city;
@@ -71,6 +128,8 @@ router.post('/:id', (req, res) =>{
     (lastName ?` lastName = "${lastName}"`: "") + ((lastName)?",": "") +
     (birthDate ?` birthDate = "${birthDate}"`: "") + ((birthDate)?",": "") + 
     (phoneNumber ?` phoneNumber = "${phoneNumber}"`: "") + ((phoneNumber)?",": "") + 
+    (bio ?` bio = "${bio}"`: "") + ((bio)?",": "") + 
+    (colorProfil ?` colorProfil = "${colorProfil}"`: "") + ((colorProfil)?",": "") + 
     (address ?` address = "${address}"`: "") + ((address)?",": "") + 
     (zipCode ?` zipCode = "${zipCode}"`: "") + ((zipCode)?",": "") + 
     (city ?` city = "${city}"`: "") + ((city)?",": "") + 

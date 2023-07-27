@@ -11,6 +11,10 @@ var userFamillyProgress = require('./routes/userfamillyprogress');
 var userFriends = require('./routes/userfriends');
 var userPlayHistory = require('./routes/userplayhistory');
 var userStepperData = require('./routes/userstepperdata');
+var communityChallenge = require('./routes/communityChallenge');
+var communityEvent = require('./routes/communityEvent');
+var communityGroup = require('./routes/communityGroup');
+var progressPointData = require('./routes/progressPointData');
 
 var app = express();
 
@@ -39,6 +43,10 @@ app.use('/userfamillyprogress',userFamillyProgress );
 app.use('/userfriends' , userFriends);
 app.use('/userplayhistory',userPlayHistory);
 app.use('/userstepperdata',userStepperData);
+app.use('/communitychallenge',communityChallenge);
+app.use('/communityevent',communityEvent);
+app.use('/communitygroup',communityGroup);
+app.use('/progresspointdata',progressPointData);
 
 // catch 404 and forward to error handler
 app.use(function(req, res, next) {

@@ -36,7 +36,9 @@ router.put('/', (req, res) =>{
     const initCardAssociation = req.body.initCardAssociation;
     const initPrePlay = req.body.initPrePlay;
     const initPlayGame = req.body.initPlayGame;
-    mysql.connection.query('insert into userstepperdata (userId, initHomeScreen, initCardAssociation, initPrePlay, initPlayGame) values(?, ?, ?, ?, ?)',[userId, initHomeScreen, initCardAssociation, initPrePlay, initPlayGame],(err,result) => {
+    const prePlayHint = req.body.prePlayHint;
+    const prePlayData = req.body.prePlayData;
+    mysql.connection.query('insert into userstepperdata (userId, initHomeScreen, initCardAssociation, initPrePlay, initPlayGame, prePlayHint, prePlayData) values(?, ?, ?, ?, ?, ?, ?)',[userId, initHomeScreen, initCardAssociation, initPrePlay, initPlayGame, prePlayHint, prePlayData],(err,result) => {
         if(err){
             console.log(err);
             res.status(500).send({error: err});
@@ -44,7 +46,7 @@ router.put('/', (req, res) =>{
             res.status(200).json(result.insertId);
         }
     })
-})
+});
 
 router.post('/:id', (req, res) =>{
     const userId = req.body.userId;
@@ -52,6 +54,8 @@ router.post('/:id', (req, res) =>{
     const initCardAssociation = req.body.initCardAssociation;
     const initPrePlay = req.body.initPrePlay;
     const initPlayGame = req.body.initPlayGame;
+    const prePlayHint = req.body.prePlayHint;
+    const prePlayData = req.body.prePlayData;
     const id=req.params.id;
 
     const queryUpdateRaw ="UPDATE userstepperdata SET " + 
@@ -59,7 +63,9 @@ router.post('/:id', (req, res) =>{
     (initHomeScreen ?` initHomeScreen  = "${initHomeScreen}"`: "") + ((initHomeScreen)?",": "") +
     (initCardAssociation ?` initCardAssociation = "${initCardAssociation}"`: "") + ((initCardAssociation)?",": "") +
     (initPrePlay ?` initPrePlay = "${initPrePlay}"`: "") + ((initPrePlay)?",": "") +
-    (initPlayGame ?` initPlayGame = "${initPlayGame}"`: "");
+    (initPlayGame ?` initPlayGame = "${initPlayGame}"`: "") + ((initPlayGame)?",": "") +
+    (prePlayHint ?` prePlayHint = "${prePlayHint}"`: "") + ((prePlayHint)?",": "") +
+    (prePlayData ?` prePlayData = "${prePlayData}"`: "");
 
     const queryUpdate = queryUpdateRaw.substring(0, queryUpdateRaw.length -1);
 
@@ -72,7 +78,95 @@ router.post('/:id', (req, res) =>{
             res.status(200).json(result);
         }
     })
-})
+});
+
+router.post('/:userId/initHomeScreen', (req, res) =>{
+    const userId = req.params.userId;
+    const initHomeScreen = req.body.initHomeScreen;
+
+    mysql.connection.query("UPDATE userstepperdata SET initHomeScreen = ? where userId = ?",[initHomeScreen, userId],(err,result) =>{
+        if(err){
+            console.log(err);
+            res.status(500).send({error: err});
+        }else{
+            console.log("c'est envoyé");
+            res.status(200).json(result);
+        }
+    })
+});
+router.post('/:userId/initCardAssociation', (req, res) =>{
+    const userId = req.params.userId;
+    const initCardAssociation = req.body.initCardAssociation;
+
+    mysql.connection.query("UPDATE userstepperdata SET initCardAssociation = ? where userId = ?",[initCardAssociation, userId],(err,result) =>{
+        if(err){
+            console.log(err);
+            res.status(500).send({error: err});
+        }else{
+            console.log("c'est envoyé");
+            res.status(200).json(result);
+        }
+    })
+});
+
+router.post('/:userId/initPrePlay', (req, res) =>{
+    const userId = req.params.userId;
+    const initPrePlay = req.body.initPrePlay;
+
+    mysql.connection.query("UPDATE userstepperdata SET initPrePlay = ? where userId = ?",[initPrePlay, userId],(err,result) =>{
+        if(err){
+            console.log(err);
+            res.status(500).send({error: err});
+        }else{
+            console.log("c'est envoyé");
+            res.status(200).json(result);
+        }
+    })
+});
+
+router.post('/:userId/initPlayGame', (req, res) =>{
+    const userId = req.params.userId;
+    const initPlayGame = req.body.initPlayGame;
+
+    mysql.connection.query("UPDATE userstepperdata SET initPlayGame = ? where userId = ?",[initPlayGame, userId],(err,result) =>{
+        if(err){
+            console.log(err);
+            res.status(500).send({error: err});
+        }else{
+            console.log("c'est envoyé");
+            res.status(200).json(result);
+        }
+    })
+});
+
+router.post('/:userId/prePlayHint', (req, res) =>{
+    const userId = req.params.userId;
+    const prePlayHint = req.body.prePlayHint;
+
+    mysql.connection.query("UPDATE userstepperdata SET prePlayHint = ? where userId = ?",[prePlayHint, userId],(err,result) =>{
+        if(err){
+            console.log(err);
+            res.status(500).send({error: err});
+        }else{
+            console.log("c'est envoyé");
+            res.status(200).json(result);
+        }
+    })
+});
+router.post('/:userId/prePlayData', (req, res) =>{
+    const userId = req.params.userId;
+    const prePlayData = req.body.prePlayData;
+
+    mysql.connection.query("UPDATE userstepperdata SET prePlayData = ? where userId = ?",[prePlayData, userId],(err,result) =>{
+        if(err){
+            console.log(err);
+            res.status(500).send({error: err});
+        }else{
+            console.log("c'est envoyé");
+            res.status(200).json(result);
+        }
+    })
+});
 
 router.delete('/:id', (req, res) =>{
     const id=req.params.id;

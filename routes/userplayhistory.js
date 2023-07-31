@@ -33,10 +33,11 @@ router.get('/:userId', ( req, res) =>{
 /* POST users */
 router.put('/', (req, res) =>{
     const userId = req.body.userId;
+    const typePlay = req.body.typePlay;
     const time = req.body.time;
     const datePlayed = req.body.datePlayed;
     const errorNumber = req.body.errorNumber;
-    mysql.connection.query('insert into userplayhistory (userId, time, datePlayed, errorNumber) values(?, ?, ?, ?)',[userId, time, datePlayed, errorNumber],(err,result) => {
+    mysql.connection.query('insert into userplayhistory (userId, typePlay, time, datePlayed, errorNumber) values(?, ?, ?, ?, ?)',[userId, typePlay, time, datePlayed, errorNumber],(err,result) => {
         if(err){
             console.log(err);
             res.status(500).send({error: err});
@@ -48,6 +49,7 @@ router.put('/', (req, res) =>{
 
 router.post('/:id', (req, res) =>{
     const userId = req.body.userId;
+    const typePlay = req.body.typePlay;
     const time = req.body.time;
     const datePlayed = req.body.datePlayed;
     const errorNumber = req.body.errorNumber;
@@ -55,6 +57,7 @@ router.post('/:id', (req, res) =>{
 
     const queryUpdateRaw ="UPDATE userplayhistory SET " + 
     (userId ?`userId = "${userId}"`: "") + (userId?",": "") +
+    (typePlay ?` time  = "${typePlay}"`: "") + ((typePlay)?",": "") +
     (time ?` time  = "${time}"`: "") + ((time)?",": "") +
     (datePlayed ?` datePlayed = "${datePlayed}"`: "") + ((datePlayed)?",": "") +
     (errorNumber ?` errorNumber = "${errorNumber}"`: "");

@@ -43,31 +43,22 @@ router.put('/', (req, res) =>{
     })
 })
 
-router.post('/:id', (req, res) =>{
-    const userId = req.body.userId;
+router.post('/:userId', (req, res) =>{
     const cards = req.body.cards;
-    const id=req.params.id;
-
-    const queryUpdateRaw ="UPDATE userdatacard SET " + 
-    (userId ?`userId = "${userId}"`: "") + (userId?",": "") +
-    (cards ?` cards  = "${cards}"`: "");
-
-    const queryUpdate = queryUpdateRaw.substring(0, queryUpdateRaw.length -1);
-
-    mysql.connection.query(queryUpdate + ` where id = ${id};`,(err,result) =>{
+    const userId=req.params.userId;
+    mysql.connection.query('UPDATE userdatacard SET cards = ? where userId = ?', [cards, userId],(err,result) =>{
         if(err){
             console.log(err);
             res.status(500).send({error: err});
         }else{
-            console.log("c'est envoyé");
             res.status(200).json(result);
         }
     })
 })
 
-router.delete('/:id', (req, res) =>{
-    const id=req.params.id;
-    mysql.connection.query('DELETE FROM userdatacard WHERE id = ?',[id],(err,result) => {
+router.delete('/:userId', (req, res) =>{
+    const userId=req.params.userId;
+    mysql.connection.query('DELETE FROM userdatacard WHERE userId = ?',[userId],(err,result) => {
         if(err){
             console.log(err);
             res.status(500).send({err: err});

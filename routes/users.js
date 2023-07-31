@@ -57,7 +57,7 @@ router.get('/:userId/rank', (req, res) => {
 /* GET user group by user ID with member numbers. */
 router.get('/:userId/groups', ( req, res) =>{
     const userId = req.params.userId;
-    mysql.connection.query('SELECT DISTINCT cg.id, cg.title, cg.colortheme, cg.description, cg.image, cg.userOwner, cg.visibility, (SELECT COUNT(*) FROM communitygroupuser WHERE idGroup = cg.id) as nbMember from communitygroup cg LEFT JOIN communitygroupuser cgu ON cg.id = cgu.idGroup WHERE cgu.idUser = ?',[userId], (err,result) => {
+    mysql.connection.query('SELECT DISTINCT cg.id, cg.title, cg.colortheme, cg.description, cg.image, u.firstName as userOwner, cg.visibility, (SELECT COUNT(*) FROM communitygroupuser WHERE idGroup = cg.id) as nbMember from communitygroup cg LEFT JOIN communitygroupuser cgu ON cg.id = cgu.idGroup LEFT JOIN user u ON cg.userOwner = u.userId WHERE cgu.idUser = ?',[userId], (err,result) => {
         if(err){
             console.log(err);
             res.status(500).send({error: err})
@@ -71,7 +71,7 @@ router.get('/:userId/groups', ( req, res) =>{
 router.get('/:userId/groups/:groupId', ( req, res) =>{
     const userId = req.params.userId;
     const groupId = req.params.groupId;
-    mysql.connection.query('SELECT DISTINCT cg.id, cg.title, cg.colortheme, cg.description, cg.image, cg.userOwner, cg.visibility, (SELECT COUNT(*) FROM communitygroupuser WHERE idGroup = cg.id) as nbMember from communitygroup cg LEFT JOIN communitygroupuser cgu ON cg.id = cgu.idGroup WHERE cgu.idUser = = ? AND cgu.idGroup = ?',[userId, groupId], (err,result) => {
+    mysql.connection.query('SELECT DISTINCT cg.id, cg.title, cg.colortheme, cg.description, cg.image, u.firstName as userOwner, cg.visibility, (SELECT COUNT(*) FROM communitygroupuser WHERE idGroup = cg.id) as nbMember from communitygroup cg LEFT JOIN communitygroupuser cgu ON cg.id = cgu.idGroup LEFT JOIN user u ON cg.userOwner = u.userId WHERE cgu.idUser = ? AND cgu.idGroup = ?',[userId, groupId], (err,result) => {
         if(err){
             console.log(err);
             res.status(500).send({error: err})

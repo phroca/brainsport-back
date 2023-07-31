@@ -43,18 +43,11 @@ router.put('/', (req, res) =>{
     })
 })
 
-router.post('/:id', (req, res) =>{
-    const userId = req.body.userId;
+router.post('/:userId', (req, res) =>{
+    const userId = req.params.userId;
     const famillyProgress = req.body.famillyProgress;
-    const id=req.params.id;
 
-    const queryUpdateRaw ="UPDATE userfamillyprogress SET " + 
-    (userId ?`userId = "${userId}"`: "") + (userId?",": "") +
-    (famillyProgress ?` famillyProgress  = "${famillyProgress}"`: "");
-
-    const queryUpdate = queryUpdateRaw.substring(0, queryUpdateRaw.length -1);
-
-    mysql.connection.query(queryUpdate + ` where id = ${id};`,(err,result) =>{
+    mysql.connection.query("UPDATE userfamillyprogress SET famillyProgress  = ? where userId = ?", [famillyProgress, userId],(err,result) =>{
         if(err){
             console.log(err);
             res.status(500).send({error: err});

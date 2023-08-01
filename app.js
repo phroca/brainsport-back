@@ -15,6 +15,7 @@ var communityChallenge = require('./routes/communityChallenge');
 var communityEvent = require('./routes/communityEvent');
 var communityGroup = require('./routes/communityGroup');
 var progressPointData = require('./routes/progressPointData');
+var rewardsData = require('./routes/rewardsData');
 
 var app = express();
 
@@ -47,6 +48,7 @@ app.use('/communitychallenge',communityChallenge);
 app.use('/communityevent',communityEvent);
 app.use('/communitygroup',communityGroup);
 app.use('/progresspointdata',progressPointData);
+app.use('/rewardsdata',rewardsData);
 
 // catch 404 and forward to error handler
 app.use(function(req, res, next) {

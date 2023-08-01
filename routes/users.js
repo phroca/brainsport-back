@@ -91,7 +91,7 @@ router.put('/', (req, res) =>{
     const birthDate = req.body.birthDate;
     const phoneNumber = req.body.phoneNumber;
     const bio = req.body.bio;
-    const colorProfil = req.body.bio;
+    const colorProfil = req.body.colorProfil;
     const address = req.body.address;
     const zipCode = req.body.zipCode;
     const city = req.body.city;
@@ -106,46 +106,57 @@ router.put('/', (req, res) =>{
     })
 })
 
-router.post('/:id', (req, res) =>{
-    const userId = req.body.userId;
+router.post('/:userId', (req, res) =>{
+    const userId = req.params.userId;
     const email = req.body.email;
     const firstName = req.body.firstName;
     const lastName = req.body.lastName;
     const birthDate = req.body.birthDate;
     const phoneNumber = req.body.phoneNumber;
     const bio = req.body.bio;
-    const colorProfil = req.body.bio;
+    const colorProfil = req.body.colorProfil;
     const address = req.body.address;
     const zipCode = req.body.zipCode;
     const city = req.body.city;
     const region = req.body.region;
-    const id=req.params.id;
 
     const queryUpdateRaw ="UPDATE user SET " + 
-    (userId ?`userId = "${userId}"`: "") + (userId?",": "") +
     (email ?` email  = "${email}"`: "") + ((email)?",": "") +
     (firstName ?` firstName = "${firstName}"`: "") + ((firstName)?",": "") +
     (lastName ?` lastName = "${lastName}"`: "") + ((lastName)?",": "") +
-    (birthDate ?` birthDate = "${birthDate}"`: "") + ((birthDate)?",": "") + 
+    (birthDate ?` birthDate = ${birthDate}`: "") + ((birthDate)?",": "") + 
     (phoneNumber ?` phoneNumber = "${phoneNumber}"`: "") + ((phoneNumber)?",": "") + 
     (bio ?` bio = "${bio}"`: "") + ((bio)?",": "") + 
     (colorProfil ?` colorProfil = "${colorProfil}"`: "") + ((colorProfil)?",": "") + 
     (address ?` address = "${address}"`: "") + ((address)?",": "") + 
     (zipCode ?` zipCode = "${zipCode}"`: "") + ((zipCode)?",": "") + 
     (city ?` city = "${city}"`: "") + ((city)?",": "") + 
-    (region ?` region = "${region}"`: "");
+    (region ?` region = "${region}" `: "");
 
     const queryUpdate = queryUpdateRaw.substring(0, queryUpdateRaw.length -1);
 
-    mysql.connection.query(queryUpdate + ` where id = ${id};`,(err,result) =>{
+    mysql.connection.query(queryUpdate + ` where userId = "${userId}";`,(err,result) =>{
         if(err){
             console.log(err);
             res.status(500).send({error: err});
         }else{
-            console.log("c'est envoyé");
             res.status(200).json(result);
         }
     })
+})
+
+router.post('/:userId/rewardPoints', (req, res) =>{
+    const userId = req.params.userId;
+    const rewardPoints = req.body.rewardPoints;
+    mysql.connection.query('UPDATE user SET rewardPoints = ? WHERE userId = ?',[rewardPoints, userId],(err,result) => {
+        if(err){
+            console.log(err);
+            res.status(500).send({err: err});
+        }else{
+            res.status(200).json(result);
+        }
+    })
+
 })
 
 router.delete('/:id', (req, res) =>{

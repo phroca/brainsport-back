@@ -4,7 +4,7 @@ const mysql = require('../models/db');
 
 /* GET users listing. */
 router.get('/', ( req, res) =>{
-    mysql.connection.query('SELECT * FROM progresspointdata', (err,result) => {
+    mysql.connection.query('SELECT * FROM rewardsdata', (err,result) => {
         if(err){
             console.log(err);
             res.status(500).send({error: err})
@@ -17,7 +17,7 @@ router.get('/', ( req, res) =>{
 /* GET users listing. */
 router.get('/:id', ( req, res) =>{
     const id = req.params.id;
-    mysql.connection.query('SELECT * FROM progresspointdata where id = ?',[id], (err,result) => {
+    mysql.connection.query('SELECT * FROM rewardsdata where id = ?',[id], (err,result) => {
         if(err){
             console.log(err);
             res.status(500).send({error: err})
@@ -31,10 +31,9 @@ router.get('/:id', ( req, res) =>{
 
 /* POST users */
 router.put('/', (req, res) =>{
-    const rewardPointToReach = req.body.rewardPointToReach;
-    const levelName = req.body.levelName;
-    const imageAvatar = req.body.imageAvatar;
-    mysql.connection.query('insert into progresspointdata (rewardPointToReach, levelName, imageAvatar) values(?, ?, ?)',[rewardPointToReach, levelName, imageAvatar],(err,result) => {
+    const type = req.body.type;
+    const points = req.body.points;
+    mysql.connection.query('insert into rewardsdata (type, points) values(?, ?, )',[type, points],(err,result) => {
         if(err){
             console.log(err);
             res.status(500).send({error: err});
@@ -45,15 +44,13 @@ router.put('/', (req, res) =>{
 })
 
 router.post('/:id', (req, res) =>{
-    const rewardPointToReach = req.body.rewardPointToReach;
-    const levelName = req.body.levelName;
-    const imageAvatar = req.body.imageAvatar;
+    const type = req.body.type;
+    const points = req.body.points;
     const id=req.params.id;
 
-    const queryUpdateRaw ="UPDATE progresspointdata SET " + 
-    (rewardPointToReach ?`rewardPointToReach = ${rewardPointToReach}`: "") + (rewardPointToReach?",": "") +
-    (levelName ?`levelName = "${levelName}"`: "") + (levelName?",": "") +
-    (imageAvatar ?`imageAvatar = "${imageAvatar}" `: "");
+    const queryUpdateRaw ="UPDATE rewardsdata SET " + 
+    (type ?`type = ${type}`: "") + (type?",": "") +
+    (points ?`points = ${points} `: "");
 
     const queryUpdate = queryUpdateRaw.substring(0, queryUpdateRaw.length -1);
 
@@ -69,7 +66,7 @@ router.post('/:id', (req, res) =>{
 
 router.delete('/:id', (req, res) =>{
     const id=req.params.id;
-    mysql.connection.query('DELETE FROM progresspointdata WHERE id = ?',[id],(err,result) => {
+    mysql.connection.query('DELETE FROM rewardsdata WHERE id = ?',[id],(err,result) => {
         if(err){
             console.log(err);
             res.status(500).send({err: err});

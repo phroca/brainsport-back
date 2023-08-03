@@ -26,11 +26,38 @@ router.get('/:id', ( req, res) =>{
         }
     });
 });
+/* GET public group to show to the user (list of group exxept the user in it and if he is owner). */
+router.get('/user/:userId/publicGroup', ( req, res) =>{
+    const userId = req.params.userId;
+    mysql.connection.query('SELECT DISTINCT cg.id, cg.title, cg.colortheme, cg.description, cg.image, u.firstName as userOwner, cg.visibility, (SELECT COUNT(*) FROM communitygroupuser WHERE idGroup = cg.id) as nbMember from communitygroup cg LEFT JOIN communitygroupuser cgu ON cg.id = cgu.idGroup LEFT JOIN user u ON cg.userOwner = u.userId WHERE cg.visibility = 1 AND cg.userOwner <> ?',[userId], (err,result) => {
+        if(err){
+            console.log(err);
+            res.status(500).send({error: err})
+        }else{
+            res.status(200).json(result);
+        }
+    });
+});
+
+/* JOIN/CREATE USER ON PUBLIC GROUP => STATE VALIDATED*/
+router.put('/:idGroup/users/:userId', (req, res) => {
+    const idGroup = req.params.idGroup;
+    const userId = req.params.userId;
+    mysql.connection.query('INSERT into communitygroupuser (idGroup, idUser, state) values(?, ?, ?)',[idGroup, userId, "VALIDATED"], (err,result) => {
+        if(err){
+            console.log(err);
+            res.status(500).send({error: err})
+        }else{
+            console.log(result);
+            res.status(200).json(result);
+        }
+    });
+})
 
 /* GET group users by group id. */
 router.get('/:idGroup/users', ( req, res) =>{
     const idGroup = req.params.idGroup;
-    mysql.connection.query('SELECT DISTINCT cgu.id, cgu.idGroup, cgu.idUser, u.firstName, u.colorProfil, u.rewardPoints FROM communitygroupuser cgu LEFT JOIN user u ON cgu.idUser = u.userId WHERE cgu.idGroup = ?',[idGroup], (err,result) => {
+    mysql.connection.query('SELECT DISTINCT cgu.id, cgu.idGroup, cgu.idUser, cgu.state, u.firstName, u.colorProfil, u.rewardPoints FROM communitygroupuser cgu LEFT JOIN user u ON cgu.idUser = u.userId WHERE cgu.idGroup = ?',[idGroup], (err,result) => {
         if(err){
             console.log(err);
             res.status(500).send({error: err})
@@ -44,7 +71,7 @@ router.get('/:idGroup/users', ( req, res) =>{
 
 
 /* GET group by userowner. */
-router.get('/userId/:userId', ( req, res) =>{
+router.get('/user/:userId', ( req, res) =>{
     const userId = req.params.userId;
     mysql.connection.query('SELECT * FROM communitygroup where userOwner = ?',[userId], (err,result) => {
         if(err){

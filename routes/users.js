@@ -67,7 +67,7 @@ router.get('/:userId/groups', ( req, res) =>{
     });
 });
 
-/* GET user group by user ID and group id with member numbers. */
+/* GET user group by user ID and group id with member numbers. USED TO VALIDATE CREATION OF A GROUP */
 router.get('/:userId/groups/:groupId', ( req, res) =>{
     const userId = req.params.userId;
     const groupId = req.params.groupId;
@@ -143,6 +143,19 @@ router.post('/:userId', (req, res) =>{
             res.status(200).json(result);
         }
     })
+})
+
+router.get('/:userId/rewardPoints', (req, res) =>{
+    const userId = req.params.userId;
+    mysql.connection.query('SELECT rewardPoints FROM user WHERE userId = ?',[userId],(err,result) => {
+        if(err){
+            console.log(err);
+            res.status(500).send({err: err});
+        }else{
+            res.status(200).json(result);
+        }
+    })
+
 })
 
 router.post('/:userId/rewardPoints', (req, res) =>{

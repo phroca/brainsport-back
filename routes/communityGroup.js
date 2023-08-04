@@ -54,6 +54,21 @@ router.put('/:idGroup/users/:userId', (req, res) => {
     });
 })
 
+/* JOIN USER ON PRIVATE GROUP => STATE VALIDATED*/
+router.post('/privateGroup/:idGroup/users/:userId', (req, res) => {
+    const idGroup = req.params.idGroup;
+    const userId = req.params.userId;
+    mysql.connection.query('UPDATE communitygroupuser SET state = ? WHERE idGroup = ? AND idUser = ?',["VALIDATED", idGroup, userId], (err,result) => {
+        if(err){
+            console.log(err);
+            res.status(500).send({error: err})
+        }else{
+            console.log(result);
+            res.status(200).json(result);
+        }
+    });
+})
+
 /* GET group users by group id. */
 router.get('/:idGroup/users', ( req, res) =>{
     const idGroup = req.params.idGroup;
@@ -87,6 +102,20 @@ router.get('/user/:userId', ( req, res) =>{
 router.get('/:groupId/nbMembers', ( req, res) =>{
     const groupId = req.params.groupId;
     mysql.connection.query('SELECT COUNT(cgu.id) as nbMember from communitygroupuser cgu WHERE cgu.idGroup = ?',[groupId], (err,result) => {
+        if(err){
+            console.log(err);
+            res.status(500).send({error: err})
+        }else{
+            res.status(200).json(result);
+        }
+    });
+});
+
+/* PUT add user to group. */
+router.put('/:groupId/add/:userId', ( req, res) =>{
+    const groupId = req.params.groupId;
+    const userId = req.params.userId;
+    mysql.connection.query('INSERT INTO communitygroupuser (idGroup, idUser, state) VALUES(?, ?, ?)',[groupId, userId, "WAITING"], (err,result) => {
         if(err){
             console.log(err);
             res.status(500).send({error: err})
@@ -188,6 +217,19 @@ router.post('/:id', (req, res) =>{
 router.delete('/:id', (req, res) =>{
     const id=req.params.id;
     mysql.connection.query('DELETE FROM communitygroup WHERE id = ?',[id],(err,result) => {
+        if(err){
+            console.log(err);
+            res.status(500).send({err: err});
+        }else{
+            res.status(200).json(result);
+        }
+    })
+
+});
+
+router.delete('/deleteInvitation/:id', (req, res) =>{
+    const id=req.params.id;
+    mysql.connection.query('DELETE FROM communitygroupuser WHERE id = ?',[id],(err,result) => {
         if(err){
             console.log(err);
             res.status(500).send({err: err});

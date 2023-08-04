@@ -13,6 +13,21 @@ router.get('/', ( req, res) =>{
         }
     });
 });
+/* GET users listing. */
+router.get('/byChar/:char', ( req, res) =>{
+  const char = req.params.char;
+  const query = `SELECT * FROM user where firstName LIKE "${char}%"`;
+    mysql.connection.query(query, (err,result) => {
+        if(err){
+            console.log(err);
+            res.status(500).send({error: err})
+        }else{
+            res.status(200).json(result);
+        }
+    });
+});
+
+
 
 /* GET user by userId. */
 router.get('/:userId', ( req, res) =>{
@@ -57,7 +72,20 @@ router.get('/:userId/rank', (req, res) => {
 /* GET user group by user ID with member numbers. */
 router.get('/:userId/groups', ( req, res) =>{
     const userId = req.params.userId;
-    mysql.connection.query('SELECT DISTINCT cg.id, cg.title, cg.colortheme, cg.description, cg.image, u.firstName as userOwner, cg.visibility, (SELECT COUNT(*) FROM communitygroupuser WHERE idGroup = cg.id) as nbMember from communitygroup cg LEFT JOIN communitygroupuser cgu ON cg.id = cgu.idGroup LEFT JOIN user u ON cg.userOwner = u.userId WHERE cgu.idUser = ?',[userId], (err,result) => {
+    mysql.connection.query('SELECT DISTINCT cg.id, cgu.id as groupUserId, cg.title, cg.colortheme, cg.description, cg.image, u.firstName as userOwner, cg.visibility, (SELECT COUNT(*) FROM communitygroupuser WHERE idGroup = cg.id AND state="VALIDATED") as nbMember from communitygroup cg LEFT JOIN communitygroupuser cgu ON cg.id = cgu.idGroup LEFT JOIN user u ON cg.userOwner = u.userId WHERE cgu.idUser = ? AND cgu.state = ?',[userId, "VALIDATED"], (err,result) => {
+        if(err){
+            console.log(err);
+            res.status(500).send({error: err})
+        }else{
+            res.status(200).json(result);
+        }
+    });
+});
+
+/* GET user group by user ID with member numbers. */
+router.get('/:userId/waitingGroups', ( req, res) =>{
+    const userId = req.params.userId;
+    mysql.connection.query('SELECT DISTINCT cg.id, cgu.id as groupUserId, cg.title, cg.colortheme, cg.description, cg.image, u.firstName as userOwner, cg.visibility, (SELECT COUNT(*) FROM communitygroupuser WHERE idGroup = cg.id AND state="VALIDATED") as nbMember from communitygroup cg LEFT JOIN communitygroupuser cgu ON cg.id = cgu.idGroup LEFT JOIN user u ON cg.userOwner = u.userId WHERE cgu.idUser = ? AND cgu.state = ?',[userId, "WAITING"], (err,result) => {
         if(err){
             console.log(err);
             res.status(500).send({error: err})

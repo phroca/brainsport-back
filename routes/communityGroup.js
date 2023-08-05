@@ -172,7 +172,7 @@ router.put('/', (req, res) =>{
             res.status(500).send({error: err});
         }else{
             const idGroupCreated = result.insertId;
-            mysql.connection.query('insert into communitygroupuser (idGroup, idUser) values(?, ?)',[idGroupCreated, userOwner],(err,result) => {
+            mysql.connection.query('insert into communitygroupuser (idGroup, idUser, state) values(?, ?, ?)',[idGroupCreated, userOwner, "VALIDATED"],(err,result) => {
                 if(err){
                     console.log(err);
                     res.status(500).send({error: err})

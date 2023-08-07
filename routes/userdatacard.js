@@ -33,7 +33,7 @@ router.get('/:userId', ( req, res) =>{
 router.put('/', (req, res) =>{
     const userId = req.body.userId;
     const cards = req.body.cards;
-    mysql.connection.query(`insert into userdatacard (userId, cards) values("${userId}", "${cards}")`,(err,result) => {
+    mysql.connection.query('insert into userdatacard (userId, cards) values(?, ?)',[userId, cards],(err,result) => {
         if(err){
             console.log(err);
             res.status(500).send({error: err});

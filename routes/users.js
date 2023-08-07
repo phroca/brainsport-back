@@ -124,7 +124,7 @@ router.put('/', (req, res) =>{
     const zipCode = req.body.zipCode;
     const city = req.body.city;
     const region = req.body.region;
-    mysql.connection.query(`insert into user (userId, email, firstName, lastName, birthDate, phoneNumber, bio, colorProfil, address, zipCode, city, region) values("${userId}", "${email}", "${firstName}", "${lastName}", ${birthDate}, "${phoneNumber}", "${bio}","${colorProfil}", "${address}", "${zipCode}", "${city}", "${region}")`, (err,result) => {
+    mysql.connection.query('insert into user (userId, email, firstName, lastName, birthDate, phoneNumber, bio, colorProfil, address, zipCode, city, region) values(?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)',[userId, email, firstName, lastName, birthDate, phoneNumber, bio, colorProfil, address, zipCode, city, region],(err,result) => {
         if(err){
             console.log(err);
             res.status(500).send({error: err});

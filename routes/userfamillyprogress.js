@@ -33,7 +33,7 @@ router.get('/:userId', ( req, res) =>{
 router.put('/', (req, res) =>{
     const userId = req.body.userId;
     const famillyProgress = req.body.famillyProgress;
-    mysql.connection.query('insert into userfamillyprogress (userId, famillyProgress) values(?, ?)',[userId, famillyProgress],(err,result) => {
+    mysql.connection.query(`insert into userfamillyprogress (userId, famillyProgress) values("${userId}", "${famillyProgress}")`, (err,result) => {
         if(err){
             console.log(err);
             res.status(500).send({error: err});

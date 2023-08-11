@@ -138,7 +138,7 @@ router.put('/:groupId/add/:userId', (req, res) => {
 /* GET group discussion . */
 router.get('/:id/discussion', (req, res) => {
     const id = req.params.id;
-    mysql.connection.query('SELECT DISTINCT cguc.*, u.firstName, u.colorProfil FROM communitygroupuserchat cguc LEFT JOIN communitygroupuser cgu ON cguc.idGroup = cgu.idGroup LEFT JOIN user u ON cguc.idUser = u.userId WHERE cguc.idGroup = ?', [id], (err, result) => {
+    mysql.connection.query('SELECT DISTINCT cguc.*, u.firstName, u.colorProfil FROM communitygroupuserchat cguc LEFT JOIN communitygroupuser cgu ON cguc.idGroup = cgu.idGroup LEFT JOIN user u ON cguc.idUser = u.userId WHERE cguc.idGroup = ? ORDER BY cguc.dateEnvoi ASC', [id], (err, result) => {
         if (err) {
             console.log(err);
             res.status(500).send({ error: err })
